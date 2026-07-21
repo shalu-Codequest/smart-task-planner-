@@ -49,7 +49,15 @@ The implementation satisfies all major requirements of the assessment.
 
 ## Preview
 
-![Tasks Page](docs/images/Screenshot 2026-07-22 003740.png)
+![Tasks Page](docs/images/tasks-page.png)
+
+![Create Task Modal](docs/images/create-task-modal.png)
+
+![Execution Plan Sequence](docs/images/execution-plan-sequence.png)
+
+![Execution Plan Waves](docs/images/execution-plan-waves.png)
+
+![Task Details](docs/images/task-details.png)
 
 ---
 
