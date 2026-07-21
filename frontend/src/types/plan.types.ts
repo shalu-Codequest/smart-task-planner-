@@ -19,10 +19,8 @@ export interface PlanEntry {
 export interface ExecutionPlan {
   entries: PlanEntry[];
   totalTasks: number;
-  /** Sum of all effort -- completion time with one engineer. */
+  /** Sum of all effort */
   totalEffort: number;
-  /** Longest dependency chain -- the floor with unlimited engineers. */
-  criticalPathEffort: number;
   waveCount: number;
   excludedCompletedIds: string[];
 }

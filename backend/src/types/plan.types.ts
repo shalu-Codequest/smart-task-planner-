@@ -24,24 +24,14 @@ export interface PlanEntry {
 /**
  * The generated execution plan.
  *
- * `totalEffort` and `criticalPathEffort` answer two different scheduling
- * questions:
- *
- *   - totalEffort         = sum of all effort. One engineer, sequentially.
- *   - criticalPathEffort  = the longest dependency chain, weighted by effort.
- *                           The floor on completion time with unlimited
- *                           parallelism -- no amount of extra people can beat
- *                           it, because those tasks must happen in order.
- *
- * The gap between them is the theoretical benefit of parallelising. It costs
- * almost nothing to compute, because the DP runs along the topological order we
- * already have.
+ * `totalEffort` is the sum of all effort for a single engineer working
+ * sequentially. `waveCount` exposes how many rounds of parallel work the plan
+ * contains.
  */
 export interface ExecutionPlan {
   entries: PlanEntry[];
   totalTasks: number;
   totalEffort: number;
-  criticalPathEffort: number;
   waveCount: number;
   /** Tasks excluded from the plan because they are already complete. */
   excludedCompletedIds: string[];

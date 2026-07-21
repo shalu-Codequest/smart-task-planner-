@@ -117,28 +117,4 @@ export function orderingRationale(
   return `${task.priority} priority`;
 }
 
-/**
- * The parallelism gap: how much time is saved by working the plan in parallel
- * rather than sequentially.
- *
- *   totalEffort        = completion time with one engineer
- *   criticalPathEffort = completion time with unlimited engineers
- *
- * The gap between them is the theoretical value of adding people. If they are
- * equal, the graph is a pure chain and no amount of staffing helps -- useful
- * information for a sprint planner, and not obvious from looking at a list.
- */
-export function parallelismGain(plan: ExecutionPlan): {
-  saved: number;
-  percentage: number;
-  isSequential: boolean;
-} {
-  const saved = plan.totalEffort - plan.criticalPathEffort;
 
-  return {
-    saved,
-    percentage:
-      plan.totalEffort === 0 ? 0 : Math.round((saved / plan.totalEffort) * 100),
-    isSequential: saved === 0,
-  };
-}

@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(grep -rc \"//\\\\|/\\\\*\" --include=\"*.ts\" --include=\"*.tsx\" backend/src frontend/src)",
-      "Bash(sort -t: -k2 -rn)"
-    ]
-  }
-}

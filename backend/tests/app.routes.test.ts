@@ -289,12 +289,11 @@ describe('HTTP API', () => {
       expect(waveOf('T5')).toBe(3);
     });
 
-    it('exposes the scheduling metrics', async () => {
+    it('exposes the scheduling metrics without extra plan metrics', async () => {
       const response = await request(app).get('/tasks/plan').expect(200);
 
       expect(response.body.totalEffort).toBe(17);
-      // Longest weighted chain: T1(2) -> T2(5) -> T5(4) = 11.
-      expect(response.body.criticalPathEffort).toBe(11);
+      expect(response.body).not.toHaveProperty('criticalPathEffort');
       expect(response.body.waveCount).toBe(3);
     });
 

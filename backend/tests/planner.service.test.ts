@@ -649,41 +649,14 @@ describe('PlannerService', () => {
       expect(plan.totalEffort).toBe(10);
     });
 
-    it('computes the critical path as the longest weighted chain', () => {
-      // T1(2) -> T2(5) = 7   |   T1(2) -> T3(3) = 5
-      // Longest chain is 7, even though the total effort is 10.
+    it('does not expose extra planning metrics in the plan', () => {
       const plan = planner.generatePlan([
         task('T1', { estimatedEffort: 2 }),
         task('T2', { estimatedEffort: 5, dependencies: ['T1'] }),
         task('T3', { estimatedEffort: 3, dependencies: ['T1'] }),
       ]);
 
-      expect(plan.criticalPathEffort).toBe(7);
-    });
-
-    it('reports the critical path as the max effort when nothing depends on anything', () => {
-      // Fully parallel: with enough people, completion time is the single longest
-      // task.
-      const plan = planner.generatePlan([
-        task('T1', { estimatedEffort: 2 }),
-        task('T2', { estimatedEffort: 8 }),
-        task('T3', { estimatedEffort: 3 }),
-      ]);
-
-      expect(plan.totalEffort).toBe(13);
-      expect(plan.criticalPathEffort).toBe(8);
-    });
-
-    it('equates the critical path with the total effort for a pure chain', () => {
-      // Nothing can be parallelised, so no number of engineers helps.
-      const plan = planner.generatePlan([
-        task('T1', { estimatedEffort: 2 }),
-        task('T2', { estimatedEffort: 3, dependencies: ['T1'] }),
-        task('T3', { estimatedEffort: 4, dependencies: ['T2'] }),
-      ]);
-
-      expect(plan.totalEffort).toBe(9);
-      expect(plan.criticalPathEffort).toBe(9);
+      expect('criticalPathEffort' in plan).toBe(false);
     });
 
     it('numbers the plan entries from 1', () => {

@@ -1,25 +1,11 @@
 import type { ExecutionPlan } from '../types/plan.types';
-import { parallelismGain } from '../utils/plan.utils';
 
-/**
- * The plan's scheduling metrics.
- *
- * `totalEffort` and `criticalPathEffort` answer different questions -- one
- * engineer working sequentially, versus unlimited engineers bounded by the longest
- * dependency chain. See `plan.types.ts` for the full derivation.
- *
- * A planner that showed only the total would hide the most actionable fact in the
- * data: when the two numbers are equal, adding people to this sprint does nothing.
- *
- * The interpretation sentence below the figures is deliberate -- a metric a reader
- * has to interpret themselves is a metric most readers will skip.
- */
+
+ 
 export default function PlanMetrics({ plan }: { plan: ExecutionPlan }) {
-  const { saved, percentage, isSequential } = parallelismGain(plan);
-
   return (
     <div className="mb-4 rounded-lg border border-slate-200 bg-white p-4">
-      <dl className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">
         <Metric
           label="Tasks"
           value={String(plan.totalTasks)}
@@ -40,34 +26,13 @@ export default function PlanMetrics({ plan }: { plan: ExecutionPlan }) {
           label="Total effort"
           value={String(plan.totalEffort)}
           hint="One engineer, sequential"
-        />
-
-        <Metric
-          label="Critical path"
-          value={String(plan.criticalPathEffort)}
-          hint="Floor with unlimited engineers"
           emphasis
         />
       </dl>
 
       <p className="mt-3 border-t border-slate-100 pt-3 text-xs text-slate-500">
-        {isSequential ? (
-          <>
-            This plan is a{' '}
-            <strong className="text-slate-700">pure chain</strong> &mdash; every task
-            depends on the one before it, so adding engineers would not finish it
-            any sooner.
-          </>
-        ) : (
-          <>
-            Working the waves in parallel could save{' '}
-            <strong className="text-slate-700">
-              {saved} effort points ({percentage}%)
-            </strong>{' '}
-            versus working sequentially &mdash; {plan.totalEffort} down to{' '}
-            {plan.criticalPathEffort}.
-          </>
-        )}
+        The wave structure shows which tasks can run in parallel; the total effort
+        shows the sequential cost of the full plan.
       </p>
     </div>
   );

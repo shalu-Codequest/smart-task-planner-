@@ -418,7 +418,6 @@ export class PlannerService {
       entries,
       totalTasks: sorted.length,
       totalEffort,
-      criticalPathEffort: this.computeCriticalPathEffort(sorted),
       waveCount:
         entries.length > 0 ? Math.max(...entries.map((e) => e.wave)) : 0,
       excludedCompletedIds,
@@ -463,40 +462,6 @@ export class PlannerService {
     return wave;
   }
 
-  /**
-   * The critical path: the longest effort-weighted chain through the graph.
-   *
-   *     cost(task)    = effort(task) + max(cost(p)) over prerequisites p
-   *     critical path = max over all tasks
-   *
-   * This is the floor on completion time given unlimited parallelism. No number
-   * of engineers can beat it, because those tasks must happen strictly in
-   * sequence.
-   *
-   * Contrast with `totalEffort` (the sum), which is completion time with one
-   * engineer. The gap between the two is the value of parallelising; if they are
-   * equal, the graph is a pure chain and adding people does nothing.
-   *
-   * Same approach as the waves: a single DP pass along the existing topological
-   * order, so every prerequisite is already computed when we need it. O(V + E),
-   * essentially free given we already have the sort.
-   */
-  private computeCriticalPathEffort(sorted: Task[]): number {
-    const cost = new Map<string, number>();
-
-    for (const task of sorted) {
-      const prerequisiteCosts = task.dependencies
-        .map((id) => cost.get(id))
-        .filter((c): c is number => c !== undefined);
-
-      const upstream =
-        prerequisiteCosts.length === 0 ? 0 : Math.max(...prerequisiteCosts);
-
-      cost.set(task.id, upstream + task.estimatedEffort);
-    }
-
-    return cost.size === 0 ? 0 : Math.max(...cost.values());
-  }
 }
 
 // ============================================================================
@@ -547,7 +512,6 @@ function emptyPlan(excludedCompletedIds: string[]): ExecutionPlan {
     entries: [],
     totalTasks: 0,
     totalEffort: 0,
-    criticalPathEffort: 0,
     waveCount: 0,
     excludedCompletedIds,
   };

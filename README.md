@@ -195,7 +195,6 @@ Base URL: `http://localhost:4000`
   ],
   "totalTasks": 6,
   "totalEffort": 17,           // one engineer, sequential
-  "criticalPathEffort": 11,    // floor with unlimited engineers
   "waveCount": 3,
   "excludedCompletedIds": []
 }
@@ -410,17 +409,9 @@ Tasks in the same wave are **mutually independent** — all their prerequisites 
 
 Computed as a single DP pass *along the topological order we already have* — because `sorted` is topologically ordered, every prerequisite is guaranteed already processed when we reach a task. No second traversal, no memoisation, no recursion. O(V + E).
 
-### 9. Critical path
+### 9. Waves and effort
 
-```
-cost(task)    = effort(task) + max(cost(p)) over prerequisites p
-critical path = max over all tasks
-```
-
-- **`totalEffort`** = completion time with **one** engineer.
-- **`criticalPathEffort`** = the floor with **unlimited** engineers. No amount of staffing beats it, because those tasks must happen in sequence.
-
-The gap between them is the theoretical value of parallelising. **If they're equal, the graph is a pure chain and adding people does nothing** — a genuinely useful fact that's invisible from a list. Same DP trick, essentially free.
+The plan exposes the wave structure and the total sequential effort. Waves show when tasks become available in parallel, while total effort gives the sequential cost for a single engineer.
 
 ### 10. Complexity
 
@@ -429,7 +420,7 @@ The gap between them is the theoretical value of parallelising. **If they're equ
 | `buildGraph` | **O(V + E)** — every node once, every edge once |
 | `kahnsSort` | **O(V² + E)** — see below |
 | `findCyclePath` | **O(V + E)** — one DFS |
-| `computeWaves`, `computeCriticalPath` | **O(V + E)** each |
+| `computeWaves` | **O(V + E)** |
 | **Total** | **O(V² + E)** time, **O(V + E)** space |
 
 **The V² term, and why I accepted it.** Selecting the best task from the ready set is a **linear scan** — O(k) where k = |ready set|. Across V iterations that's O(V²) worst case (V independent tasks, all ready at once).
